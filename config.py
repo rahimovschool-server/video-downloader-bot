@@ -21,6 +21,10 @@ THROTTLE_RATE: float = float(os.getenv("THROTTLE_RATE", "5"))
 # ─── Playlist ───────────────────────────────────────────
 PLAYLIST_MAX_ITEMS: int = int(os.getenv("PLAYLIST_MAX_ITEMS", "0"))  # 0 = cheksiz
 
+# ─── Instagram (Ixtiyoriy) ──────────────────────────────
+INSTAGRAM_USERNAME: str = os.getenv("INSTAGRAM_USERNAME", "")
+INSTAGRAM_PASSWORD: str = os.getenv("INSTAGRAM_PASSWORD", "")
+
 # ─── Tekshiruv ───────────────────────────────────────────
 if not BOT_TOKEN:
     raise ValueError("❌ BOT_TOKEN topilmadi! .env faylini tekshiring.")
