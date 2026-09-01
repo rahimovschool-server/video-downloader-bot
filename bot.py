@@ -10,6 +10,7 @@ from aiohttp import web
 from config import BOT_TOKEN, DOWNLOAD_DIR
 from handlers import start, downloader
 from utils.cleaner import clean_all_old_files
+from services.cache import init_db
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(name)s | %(levelname)s | %(message)s")
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ async def periodic_cleanup():
             logger.info(f"🗑️ {removed} ta eski fayl o'chirildi")
 
 async def on_startup(bot: Bot) -> None:
+    await init_db()
     if RAILWAY_DOMAIN:
         wh = f"https://{RAILWAY_DOMAIN}{WEBHOOK_PATH}"
         await bot.set_webhook(url=wh, secret_token=WEBHOOK_SECRET, drop_pending_updates=True)
