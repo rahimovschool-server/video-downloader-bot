@@ -48,32 +48,30 @@ def main_menu_kb(url: str, url_type: UrlType) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def video_quality_kb(url: str) -> InlineKeyboardMarkup:
+def video_quality_kb(msg_id: int) -> InlineKeyboardMarkup:
     """Video sifat tanlash tugmalari."""
     builder = InlineKeyboardBuilder()
 
     for label, quality in VIDEO_QUALITIES:
         builder.button(
             text=label,
-            callback_data=f"dl_video|{quality}|{url}"
+            callback_data=f"vid_{quality}_{msg_id}"
         )
 
-    builder.button(text="⬅️ Orqaga", callback_data=f"back|{url}")
     builder.adjust(1)
     return builder.as_markup()
 
 
-def audio_quality_kb(url: str) -> InlineKeyboardMarkup:
+def audio_quality_kb(msg_id: int) -> InlineKeyboardMarkup:
     """Audio sifat tanlash tugmalari."""
     builder = InlineKeyboardBuilder()
 
     for label, quality in AUDIO_QUALITIES:
         builder.button(
             text=label,
-            callback_data=f"dl_audio|{quality}|{url}"
+            callback_data=f"aud_{quality}_{msg_id}"
         )
 
-    builder.button(text="⬅️ Orqaga", callback_data=f"back|{url}")
     builder.adjust(1)
     return builder.as_markup()
 

@@ -11,6 +11,8 @@ import shutil
 
 router = Router()
 
+URL_CACHE = {}
+
 @router.message(F.text.startswith("http"))
 async def handle_url(message: Message):
     url = message.text.strip()
@@ -18,15 +20,24 @@ async def handle_url(message: Message):
     if not clean_url or url_type.value == "unknown":
         await message.answer("❌ Noto'g'ri yoki qo'llab-quvvatlanmaydigan havola.")
         return
-    await message.answer("🎬 Nimani yuklab olmoqchisiz?", reply_markup=video_quality_kb(clean_url))
+        
+    URL_CACHE[message.message_id] = clean_url
+    await message.answer("🎬 Nimani yuklab olmoqchisiz?", reply_markup=video_quality_kb(message.message_id))
 
 @router.callback_query(F.data.startswith("vid_") | F.data.startswith("aud_"))
 async def handle_quality_selection(call: CallbackQuery):
     await call.message.edit_text("⏳ Yuklanmoqda, kuting...")
-    parts = call.data.split("|")
-    action, quality = parts[0].split("_")
-    url = parts[1]
-    clean_url, url_type = detect_url(url)
+    parts = call.data.split("_")
+    action = parts[0]
+    quality = parts[1]
+    msg_id = int(parts[2])
+    
+    clean_url = URL_CACHE.get(msg_id)
+    if not clean_url:
+        await call.message.edit_text("❌ Havola eskirgan. Iltimos, videoni qaytadan yuboring.")
+        return
+        
+    _, url_type = detect_url(clean_url)
     chat_id = call.message.chat.id
     
     # 1. Keshdan izlaymiz
