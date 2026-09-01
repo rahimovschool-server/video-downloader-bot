@@ -21,6 +21,9 @@ async def get_video_info(url: str) -> Optional[dict]:
         "no_warnings": True,
         "skip_download": True,
         "flat_playlist": True,
+        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
+        "geo_bypass": True,
+        "nocheckcertificate": True,
     }
     try:
         loop = asyncio.get_event_loop()
@@ -56,6 +59,9 @@ async def download_video(url: str, quality: str, chat_id: int) -> Optional[str]:
         "socket_timeout": 60,
         "retries": 5,
         "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
+        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
+        "geo_bypass": True,
+        "nocheckcertificate": True,
     }
     return await _download_single(url, opts, chat_id, ext=".mp4")
 
@@ -79,6 +85,9 @@ async def download_audio(url: str, quality: str, chat_id: int) -> Optional[str]:
             {"key": "EmbedThumbnail"},
             {"key": "FFmpegMetadata", "add_metadata": True},
         ],
+        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
+        "geo_bypass": True,
+        "nocheckcertificate": True,
     }
     return await _download_single(url, opts, chat_id, ext=".mp3")
 
