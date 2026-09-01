@@ -21,10 +21,12 @@ async def get_video_info(url: str) -> Optional[dict]:
         "no_warnings": True,
         "skip_download": True,
         "flat_playlist": True,
-        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
+        "extractor_args": {"youtube": ["player_client=android,web", "player_skip=webpage"]},
         "geo_bypass": True,
         "nocheckcertificate": True,
     }
+    if os.path.exists("cookies.txt"):
+        ydl_opts["cookiefile"] = "cookies.txt"
     try:
         loop = asyncio.get_event_loop()
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -59,10 +61,12 @@ async def download_video(url: str, quality: str, chat_id: int) -> Optional[str]:
         "socket_timeout": 60,
         "retries": 5,
         "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
-        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
+        "extractor_args": {"youtube": ["player_client=android,web", "player_skip=webpage"]},
         "geo_bypass": True,
         "nocheckcertificate": True,
     }
+    if os.path.exists("cookies.txt"):
+        opts["cookiefile"] = "cookies.txt"
     return await _download_single(url, opts, chat_id, ext=".mp4")
 
 
@@ -85,10 +89,12 @@ async def download_audio(url: str, quality: str, chat_id: int) -> Optional[str]:
             {"key": "EmbedThumbnail"},
             {"key": "FFmpegMetadata", "add_metadata": True},
         ],
-        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
+        "extractor_args": {"youtube": ["player_client=android,web", "player_skip=webpage"]},
         "geo_bypass": True,
         "nocheckcertificate": True,
     }
+    if os.path.exists("cookies.txt"):
+        opts["cookiefile"] = "cookies.txt"
     return await _download_single(url, opts, chat_id, ext=".mp3")
 
 
