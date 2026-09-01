@@ -35,7 +35,6 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 def create_dispatcher() -> Dispatcher:
     dp = Dispatcher()
-    dp.message.middleware(ThrottleMiddleware(rate=THROTTLE_RATE))
     dp.include_router(start.router)
     dp.include_router(downloader.router)
     return dp
