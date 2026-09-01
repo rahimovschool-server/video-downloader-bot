@@ -7,7 +7,7 @@ from config import DOWNLOAD_DIR
 
 logger = logging.getLogger(__name__)
 
-COBALT_API = "https://api.cobalt.tools/api/json"
+COBALT_API = "https://api.cobalt.tools/"
 
 async def cobalt_download(url: str, is_audio: bool, quality: str, chat_id: int) -> str | None:
     """Cobalt API orqali media url ini oladi va faylga saqlaydi."""
