@@ -16,7 +16,6 @@ STORAGE_CHANNEL_ID: int = int(os.getenv("STORAGE_CHANNEL_ID", "0"))
 
 # ─── Sozlamalar ─────────────────────────────────────────
 DOWNLOAD_DIR: str = os.getenv("DOWNLOAD_DIR", "downloads")
-THROTTLE_RATE: float = float(os.getenv("THROTTLE_RATE", "5"))
 
 # ─── Playlist ───────────────────────────────────────────
 PLAYLIST_MAX_ITEMS: int = int(os.getenv("PLAYLIST_MAX_ITEMS", "0"))  # 0 = cheksiz

@@ -8,9 +8,8 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp import web
 
-from config import BOT_TOKEN, DOWNLOAD_DIR, THROTTLE_RATE
+from config import BOT_TOKEN, DOWNLOAD_DIR
 from handlers import start, downloader
-from middlewares.throttle import ThrottleMiddleware
 from services.cache import init_db
 from services.uploader import start_client, stop_client
 from utils.cleaner import clean_all_old_files
