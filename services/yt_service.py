@@ -21,7 +21,7 @@ async def get_video_info(url: str) -> Optional[dict]:
         "no_warnings": True,
         "skip_download": True,
         "flat_playlist": True,
-        "extractor_args": {"youtube": ["player_client=android,web", "player_skip=webpage"]},
+        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
         "geo_bypass": True,
         "nocheckcertificate": True,
     }
@@ -61,7 +61,7 @@ async def download_video(url: str, quality: str, chat_id: int) -> Optional[str]:
         "socket_timeout": 60,
         "retries": 5,
         "postprocessors": [{"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}],
-        "extractor_args": {"youtube": ["player_client=android,web", "player_skip=webpage"]},
+        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
         "geo_bypass": True,
         "nocheckcertificate": True,
     }
@@ -89,7 +89,7 @@ async def download_audio(url: str, quality: str, chat_id: int) -> Optional[str]:
             {"key": "EmbedThumbnail"},
             {"key": "FFmpegMetadata", "add_metadata": True},
         ],
-        "extractor_args": {"youtube": ["player_client=android,web", "player_skip=webpage"]},
+        "extractor_args": {"youtube": ["player_client=android", "player_skip=webpage"]},
         "geo_bypass": True,
         "nocheckcertificate": True,
     }
