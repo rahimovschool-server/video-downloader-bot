@@ -11,6 +11,7 @@ from config import BOT_TOKEN, DOWNLOAD_DIR
 from handlers import start, downloader
 from utils.cleaner import clean_all_old_files
 from services.cache import init_db
+from services.uploader import start_client, stop_client
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(name)s | %(levelname)s | %(message)s")
 logger = logging.getLogger(__name__)
@@ -36,12 +37,14 @@ async def periodic_cleanup():
 
 async def on_startup(bot: Bot) -> None:
     await init_db()
+    await start_client()
     if RAILWAY_DOMAIN:
         wh = f"https://{RAILWAY_DOMAIN}{WEBHOOK_PATH}"
         await bot.set_webhook(url=wh, secret_token=WEBHOOK_SECRET, drop_pending_updates=True)
-    logger.info(f"🤖 Bot ishga tushdi (Oddiy rejim)")
+    logger.info(f"🤖 Bot ishga tushdi (2GB rejim)")
 
 async def on_shutdown(bot: Bot) -> None:
+    await stop_client()
     await bot.delete_webhook()
     logger.info("🛑 Bot to'xtatildi")
 

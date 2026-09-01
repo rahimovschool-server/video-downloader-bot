@@ -73,23 +73,20 @@ async def handle_quality_selection(call: CallbackQuery):
             return
 
         size = get_file_size_mb(filepath)
-        if size > 49.5:
-            await call.message.edit_text("❌ Fayl hajmi 50MB dan katta. Telegram botlari faqat 50MB gacha yubora oladi.")
-            os.remove(filepath)
-            return
-
-        inp_file = FSInputFile(filepath)
-        sent_msg = None
         
+        from services.uploader import upload_video, upload_audio as uploader_upload_audio
+        file_id = None
         if action == "vid":
-            sent_msg = await call.message.answer_video(video=inp_file, caption="✅ @tezviddownbot orqali yuklandi")
-            file_id = sent_msg.video.file_id
+            file_id = await upload_video(filepath, caption="✅ @tezviddownbot orqali yuklandi ⚡")
+            if file_id:
+                await call.message.answer_video(video=file_id)
         else:
-            sent_msg = await call.message.answer_audio(audio=inp_file, caption="✅ @tezviddownbot orqali yuklandi")
-            file_id = sent_msg.audio.file_id
+            file_id = await uploader_upload_audio(filepath, caption="✅ @tezviddownbot orqali yuklandi ⚡")
+            if file_id:
+                await call.message.answer_audio(audio=file_id)
             
         # 3. Muvaffaqiyatli jo'natilsa, keshga saqlaymiz
-        if sent_msg and file_id:
+        if file_id:
             await save_cache(clean_url, quality, url_type.value, file_id, size)
             
         await call.message.delete()
