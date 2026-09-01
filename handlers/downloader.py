@@ -57,10 +57,11 @@ async def handle_quality_selection(call: CallbackQuery):
     filepath = None
     try:
         if is_youtube(url_type):
+            from services.cobalt_service import cobalt_download
             if action == "vid":
-                filepath = await download_video(clean_url, quality, chat_id)
+                filepath = await cobalt_download(clean_url, is_audio=False, quality=quality, chat_id=chat_id)
             else:
-                filepath = await download_audio(clean_url, quality, chat_id)
+                filepath = await cobalt_download(clean_url, is_audio=True, quality=quality, chat_id=chat_id)
         elif is_instagram(url_type):
             if action == "vid":
                 filepath = await download_ig_video(clean_url, chat_id)
