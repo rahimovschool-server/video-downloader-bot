@@ -1,7 +1,7 @@
 import os
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, FSInputFile
-from services.detector import detect_url_type
+from services.detector import detect_url, is_youtube, is_instagram
 from services.yt_service import download_video, download_audio
 from services.ig_service import download_ig_video, download_ig_audio, download_ig_images
 from keyboards.inline import video_quality_kb, audio_quality_kb
@@ -14,11 +14,11 @@ router = Router()
 @router.message(F.text.startswith("http"))
 async def handle_url(message: Message):
     url = message.text.strip()
-    url_type = detect_url_type(url)
-    if not url_type:
+    clean_url, url_type = detect_url(url)
+    if not clean_url or url_type.value == "unknown":
         await message.answer("❌ Noto'g'ri yoki qo'llab-quvvatlanmaydigan havola.")
         return
-    await message.answer("🎬 Nimani yuklab olmoqchisiz?", reply_markup=video_quality_kb(url))
+    await message.answer("🎬 Nimani yuklab olmoqchisiz?", reply_markup=video_quality_kb(clean_url))
 
 @router.callback_query(F.data.startswith("vid_") | F.data.startswith("aud_"))
 async def handle_quality_selection(call: CallbackQuery):
@@ -26,11 +26,11 @@ async def handle_quality_selection(call: CallbackQuery):
     parts = call.data.split("|")
     action, quality = parts[0].split("_")
     url = parts[1]
-    url_type = detect_url_type(url)
+    clean_url, url_type = detect_url(url)
     chat_id = call.message.chat.id
     
     # 1. Keshdan izlaymiz
-    cached_file_id = await get_cached(url, quality, url_type)
+    cached_file_id = await get_cached(clean_url, quality, url_type.value)
     if cached_file_id:
         try:
             if action == "vid":
@@ -45,16 +45,16 @@ async def handle_quality_selection(call: CallbackQuery):
     # 2. Agar keshda bo'lmasa, yuklaymiz
     filepath = None
     try:
-        if url_type == "youtube":
+        if is_youtube(url_type):
             if action == "vid":
-                filepath = await download_video(url, quality, chat_id)
+                filepath = await download_video(clean_url, quality, chat_id)
             else:
-                filepath = await download_audio(url, quality, chat_id)
-        elif url_type == "instagram":
+                filepath = await download_audio(clean_url, quality, chat_id)
+        elif is_instagram(url_type):
             if action == "vid":
-                filepath = await download_ig_video(url, chat_id)
+                filepath = await download_ig_video(clean_url, chat_id)
             else:
-                filepath = await download_ig_audio(url, chat_id)
+                filepath = await download_ig_audio(clean_url, chat_id)
 
         if not filepath or not os.path.exists(filepath):
             await call.message.edit_text("⚠️ Faylni yuklab bo'lmadi.")
@@ -78,7 +78,7 @@ async def handle_quality_selection(call: CallbackQuery):
             
         # 3. Muvaffaqiyatli jo'natilsa, keshga saqlaymiz
         if sent_msg and file_id:
-            await save_cache(url, quality, url_type, file_id, size)
+            await save_cache(clean_url, quality, url_type.value, file_id, size)
             
         await call.message.delete()
         
